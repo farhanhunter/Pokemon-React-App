@@ -1,12 +1,21 @@
 // src/components/Pokemon.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Form, Button, Card, Container, Row, Col } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Card,
+  Container,
+  Row,
+  Col,
+  ListGroup,
+} from "react-bootstrap";
+import "../assets/Pokemon.css";
 
 const Pokemon = () => {
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [pokemonName, setPokemonName] = useState("pikachu");
+  const [pokemonName, setPokemonName] = useState("ivysaur");
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -37,41 +46,77 @@ const Pokemon = () => {
   };
 
   return (
-    <Container>
+    <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6}>
-          <h2 className="text-center">Pokémon Search</h2>
+        <Col md={8} lg={6} className="text-center">
+          <h2 className="pokemon-title">Pokémon Search</h2>
           <Form onSubmit={handleSearch} className="mb-4">
             <Form.Group controlId="pokemonName">
               <Form.Control
                 type="text"
                 placeholder="Enter Pokémon name"
                 required
+                className="text-center pokemon-input"
               />
             </Form.Group>
-            <Button type="submit" variant="primary" className="w-100 mt-2">
+            <Button type="submit" variant="primary" className="w-100">
               Search
             </Button>
           </Form>
           {loading && <p className="text-center">Loading...</p>}
           {error && <p className="text-danger text-center">{error}</p>}
           {pokemon && (
-            <Card className="text-center">
-              <Card.Img
-                variant="top"
-                src={pokemon.sprites.front_default}
-                alt={pokemon.name}
-              />
+            <Card className="pokemon-card text-center shadow-lg">
               <Card.Body>
-                <Card.Title>{pokemon.name.toUpperCase()}</Card.Title>
-                <Card.Text>
-                  <strong>Height:</strong> {pokemon.height}
+                <div className="pokemon-circle">
+                  <Card.Img
+                    variant="top"
+                    src={pokemon.sprites.front_default}
+                    alt={pokemon.name}
+                    className="pokemon-image"
+                  />
+                </div>
+                <Card.Title className="pokemon-name text-primary mt-3">
+                  {pokemon.name.toUpperCase()}
+                </Card.Title>
+                <Card.Text className="pokemon-details">
+                  <strong>Tinggi:</strong> {pokemon.height / 10} m
                   <br />
-                  <strong>Weight:</strong> {pokemon.weight}
+                  <strong>Berat:</strong> {pokemon.weight / 10} kg
                   <br />
-                  <strong>Type:</strong>{" "}
-                  {pokemon.types.map((type) => type.type.name).join(", ")}
+                  <strong>Tipe:</strong>{" "}
+                  {pokemon.types.map((type) => (
+                    <span
+                      key={type.type.name}
+                      className={`badge badge-${type.type.name}`}
+                    >
+                      {type.type.name}
+                    </span>
+                  ))}
                 </Card.Text>
+                <ListGroup variant="flush" className="text-start pokemon-info">
+                  <ListGroup.Item>
+                    <strong>Kemampuan:</strong>{" "}
+                    {pokemon.abilities.map((ability) => (
+                      <span key={ability.ability.name}>
+                        {ability.ability.name}
+                      </span>
+                    ))}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Pengalaman Dasar:</strong> {pokemon.base_experience}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Statistik:</strong>
+                    <ul className="list-unstyled mb-0">
+                      {pokemon.stats.map((stat) => (
+                        <li key={stat.stat.name}>
+                          {stat.stat.name}: {stat.base_stat}
+                        </li>
+                      ))}
+                    </ul>
+                  </ListGroup.Item>
+                </ListGroup>
               </Card.Body>
             </Card>
           )}
